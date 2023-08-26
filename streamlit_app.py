@@ -15,7 +15,7 @@ API_URL = "https://ishvalin-babbler.hf.space/generate"
 # App title
 st.title('Babbler 🤖') 
 if "message" not in st.session_state:
-    st.session_state["message"] = [{"sender": "Babbler", "message": "Hello, I'm Babbler. I can talk about books. What book do you want to talk about?"}]
+    st.session_state["message"] = [{"role": "Babbler", "message": "Hello, I'm Babbler. I can talk about books. What book do you want to talk about?"}]
 
 
 for msg in st.session_state.message:
@@ -23,17 +23,17 @@ for msg in st.session_state.message:
 
 prompt = st.chat_input()
 if prompt:
-    st.session_state.message.append({"sender": "user", "message": prompt})
+    st.session_state.message.append({"role": "user", "message": prompt})
     st.chat_message("user").write(prompt)
     response = requests.get(API_URL, params={"query": prompt})
     if response.status_code == 200:
         data = response.json()
         output = data["output"]
-        st.session_state.message.append({"sender": "Babbler", "message": output})
+        st.session_state.message.append({"role": "Babbler", "message": output})
         st.chat_message("Babbler").write(output)
     else:
         output = "Error: %s" % response.text
-        st.session_state.message.append({"sender": "Babbler", "message": output})
+        st.session_state.message.append({"role": "Babbler", "message": output})
         st.chat_message("Babbler").write(output)
 
 # chat_history = st.empty() 
