@@ -14,25 +14,28 @@ API_URL = "https://ishvalin-babbler.hf.space/generate"
 st.sidebar.title('Babbler 🤖')
 
 
-# Create a layout with columns
-col1, col2 = st.columns([1, 5])
 
 
-# Display chat history in the main column
-with col2:
-    for msg in st.session_state.message:
-        st.chat_message(msg["role"]).write(msg["content"])
 
-        
+
 # App title
 st.title('Babbler 🤖') 
 if "message" not in st.session_state:
     st.session_state["message"] = [{"role": "Babbler", "content": "Hello, I'm Babbler. I can talk about books. What book do you want to talk about?"}]
 
 
-for msg in st.session_state.message:
-    st.chat_message(msg["role"]).write(msg["content"])
+# for msg in st.session_state.message:
+#     st.chat_message(msg["role"]).write(msg["content"])
 
+
+# Create a layout with columns
+col1, col2 = st.columns([1, 5])
+
+# Display chat history in the main column
+with col2:
+    for msg in st.session_state.message:
+        st.chat_message(msg["role"]).write(msg["content"])
+        
 prompt = st.chat_input()
 if prompt:
     st.session_state.message.append({"role": "user", "content": prompt})
