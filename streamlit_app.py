@@ -12,8 +12,9 @@ API_URL = "https://ishvalin-babbler.hf.space/generate"
 
 
 # App title
-if not st.sidebar.title:
-  st.title('Babbler 🤖')
+# App title
+st.container()
+st.title('Babbler 🤖')
 
 
 # Sidebar for title
