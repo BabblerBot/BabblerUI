@@ -1,4 +1,4 @@
-# 📦 BabblerUI
+# 🤖 Babbler
 ```
 ⬆️ (Replace above with your app's name)
 ```
@@ -7,7 +7,7 @@ Description of the app ...
 
 ## Demo App
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://babbler.streamlit.app/)
+[![Babbler](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://babbler.streamlit.app/)
 
 ## Section Heading
 
