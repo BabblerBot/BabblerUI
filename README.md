@@ -1,4 +1,4 @@
-# 📦 Streamlit Babbler
+# 📦 BabblerUI
 ```
 ⬆️ (Replace above with your app's name)
 ```
