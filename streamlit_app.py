@@ -1,6 +1,7 @@
 import streamlit as st
 import replicate
 import os
+import requests
 
 
 # st.title('🎈 App Name')
@@ -40,11 +41,13 @@ def generate_llama2_response(prompt_input):
         if dict_message["role"] == "user":
             string_dialogue += "User: " + dict_message["content"] + "\\n\\n"
         else:
-            string_dialogue += "Assistant: " + dict_message["content"] + "\\n\\n"
-    output = replicate.run('a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5', 
-                           input={"prompt": f"{string_dialogue} {prompt_input} Assistant: ",
-                                  "temperature":0.1, "top_p":0.9, "max_length":512, "repetition_penalty":1})
-    return output
+            string_dialogue += "Assistant: " + dict_message["content"]+ "\\n\\n"
+    url = 'https://ishvalin-babbler.hf.space/generate'
+    headers = {'accept': 'application/json'}
+    data = {'query': string_dialogue + prompt_input}
+    response = requests.post(url, headers=headers, data=data)
+
+    return response.json()['output']
 
 # User-provided prompt
 if prompt := st.chat_input(disabled=not replicate_api):
