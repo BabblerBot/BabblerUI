@@ -18,6 +18,12 @@ st.sidebar.title('Babbler 🤖')
 col1, col2 = st.columns([1, 5])
 
 
+# Display chat history in the main column
+with col2:
+    for msg in st.session_state.message:
+        st.chat_message(msg["role"]).write(msg["content"])
+
+        
 # App title
 st.title('Babbler 🤖') 
 if "message" not in st.session_state:
