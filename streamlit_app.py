@@ -10,6 +10,12 @@ st.set_page_config(page_title='Babbler', page_icon='🤖')
 API_URL = "https://ishvalin-babbler.hf.space/generate"
 
 
+
+# App title
+if not st.sidebar.title:
+  st.title('Babbler 🤖')
+
+
 # Sidebar for title
 st.sidebar.title('Babbler 🤖')
 
@@ -19,7 +25,7 @@ st.sidebar.title('Babbler 🤖')
 
 
 # App title
-st.title('Babbler 🤖') 
+# st.title('Babbler 🤖') 
 if "message" not in st.session_state:
     st.session_state["message"] = [{"role": "assistant", "content": "Hello, I'm Babbler. I can talk about books. What book do you want to talk about?"}]
 
