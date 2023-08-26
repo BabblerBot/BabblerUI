@@ -13,7 +13,7 @@ API_URL = "https://ishvalin-babbler.hf.space/generate"
 
 # App title
 # App title
-st.container()
+st.columns([1])
 st.title('Babbler 🤖')
 
 
