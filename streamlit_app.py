@@ -21,7 +21,8 @@ if "message" not in st.session_state:
 for msg in st.session_state.message:
     st.chat_message(msg["role"]).write(msg["content"])
 
-prompt := st.chat_input(): 
+prompt = st.chat_input()
+if prompt:
     st.session_state.message.append({"sender": "user", "message": prompt})
     st.chat_message("user").write(prompt)
     response = requests.get(API_URL, params={"query": prompt})
