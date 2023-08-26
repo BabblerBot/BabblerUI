@@ -35,19 +35,18 @@ col1, col2 = st.columns([1, 5])
 with col2:
     for msg in st.session_state.message:
         st.chat_message(msg["role"]).write(msg["content"])
-        
-with col1:
-    prompt = st.chat_input()
-    if prompt:
-        st.session_state.message.append({"role": "user", "content": prompt})
-        st.chat_message("user").write(prompt)
-        response = requests.get(API_URL, params={"query": prompt})
-        if response.status_code == 200:
-            data = response.json()
-            output = data["output"]
-            st.session_state.message.append({"role": "Babbler", "content": output})
-            st.chat_message("Babbler").write(output)
-        else:
-            output = "Error: %s" % response.text
-            st.session_state.message.append({"role": "Babbler", "content": output})
-            st.chat_message("Babbler").write(output)
+
+prompt = st.chat_input()
+if prompt:
+    st.session_state.message.append({"role": "user", "content": prompt})
+    st.chat_message("user").write(prompt)
+    response = requests.get(API_URL, params={"query": prompt})
+    if response.status_code == 200:
+        data = response.json()
+        output = data["output"]
+        st.session_state.message.append({"role": "Babbler", "content": output})
+        st.chat_message("Babbler").write(output)
+    else:
+        output = "Error: %s" % response.text
+        st.session_state.message.append({"role": "Babbler", "content": output})
+        st.chat_message("Babbler").write(output)
