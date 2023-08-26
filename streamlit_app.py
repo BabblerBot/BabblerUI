@@ -13,6 +13,11 @@ API_URL = "https://ishvalin-babbler.hf.space/generate"
 # Sidebar for title
 st.sidebar.title('Babbler 🤖')
 
+
+# Create a layout with columns
+col1, col2 = st.columns([1, 5])
+
+
 # App title
 st.title('Babbler 🤖') 
 if "message" not in st.session_state:
