@@ -21,7 +21,7 @@ st.sidebar.title('Babbler 🤖')
 # App title
 st.title('Babbler 🤖') 
 if "message" not in st.session_state:
-    st.session_state["message"] = [{"role": "Babbler", "content": "Hello, I'm Babbler. I can talk about books. What book do you want to talk about?"}]
+    st.session_state["message"] = [{"role": "assistant", "content": "Hello, I'm Babbler. I can talk about books. What book do you want to talk about?"}]
 
 
 # for msg in st.session_state.message:
@@ -44,9 +44,9 @@ if prompt:
     if response.status_code == 200:
         data = response.json()
         output = data["output"]
-        st.session_state.message.append({"role": "Babbler", "content": output})
-        st.chat_message("Babbler").write(output)
+        st.session_state.message.append({"role": "assistant", "content": output})
+        st.chat_message("assistant").write(output)
     else:
         output = "Error: %s" % response.text
-        st.session_state.message.append({"role": "Babbler", "content": output})
-        st.chat_message("Babbler").write(output)
+        st.session_state.message.append({"role": "assistant", "content": output})
+        st.chat_message("assistant").write(output)
