@@ -14,7 +14,6 @@ API_URL = "https://ishvalin-babbler.hf.space/generate"
 # App title
 # App title
 st.columns([1])
-st.title("Babbler 🤖")
 
 
 # Sidebar for title
@@ -23,8 +22,18 @@ st.sidebar.text_input("Search Book", key="book_name_search")
 
 if st.session_state.book_name_search:
     book_name = st.session_state.book_name_search
-    title = search_book(book_name)
-    st.sidebar.markdown("## %s" % title)
+    error, book = search_book(book_name)
+    print(book)
+    if error:
+        st.sidebar.error(error)
+    else:
+        st.sidebar.success("Book found: %s" % book["title"])
+        st.title(book["title"])
+        language_code = book["languages"][0]
+        st.write(f"By {book['authors'][0]['name']}")
+        st.write(f"Language: {language_code}")
+        st.write(f"Subjects: {', '.join(book['subjects'])}")
+
 
 if "message" not in st.session_state:
     st.session_state["message"] = [
