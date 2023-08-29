@@ -3,6 +3,7 @@ import replicate
 import os
 import requests
 from utils import search_book
+from summarize import get_summary
 
 
 # App title
@@ -20,6 +21,19 @@ st.columns([1])
 st.sidebar.title("Babbler 🤖")
 st.sidebar.text_input("Search Book", key="book_name_search")
 
+m = st.markdown(
+    """
+<style>
+div.stButton > button:first-child {
+    color: #ffffff;
+    background-color: #373a3d;
+}
+
+
+</style>""",
+    unsafe_allow_html=True,
+)
+
 if st.session_state.book_name_search:
     book_name = st.session_state.book_name_search
     error, book = search_book(book_name)
@@ -27,12 +41,20 @@ if st.session_state.book_name_search:
     if error:
         st.sidebar.error(error)
     else:
+        st.session_state.book = book
         st.sidebar.success("Book found: %s" % book["title"])
         st.title(book["title"])
-        language_code = book["languages"][0]
-        st.write(f"By {book['authors'][0]['name']}")
-        st.write(f"Language: {language_code}")
+        if len(book["authors"]) > 0:
+            st.write(f"By {book['authors'][0]['name']}")
+        if len(book["languages"]) > 0:
+            language_code = book["languages"][0]
+            st.write(f"Language: {language_code}")
         st.write(f"Subjects: {', '.join(book['subjects'])}")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.button("Summarize", key="summarize")
+        with col2:
+            st.button("Start Chatting", key="start_chatting")
 
 
 if "message" not in st.session_state:
@@ -46,7 +68,7 @@ if "message" not in st.session_state:
 
 def render_chat():
     # Create a layout with columns
-    col1, col2 = st.columns([1, 5])
+    col1, col2 = st.columns([1, 8])
 
     # Display chat history in the main column
     with col2:
@@ -67,3 +89,12 @@ def render_chat():
             output = "Error: %s" % response.text
             st.session_state.message.append({"role": "assistant", "content": output})
             st.chat_message("assistant").write(output)
+
+
+if st.session_state.summarize:
+    summary = get_summary(st.session_state.book["id"])
+    st.write(summary)
+    render_chat()
+
+if st.session_state.start_chatting:
+    render_chat()
