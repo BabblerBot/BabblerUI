@@ -91,7 +91,7 @@ if st.session_state.summarize:
             },
             {
                 "role": "assistant",
-                "content": "Hello, I'm Babbler. I can talk about books. What book do you want to talk about?",
+                "content":f"Hello, I'm Babbler. I can talk about the book {st.session_state.book['title']}. Is there anything you want to know about?",
             }
         ]
 
