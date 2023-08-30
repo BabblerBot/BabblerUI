@@ -2,7 +2,9 @@ import streamlit as st
 import replicate
 import os
 import requests
+import asyncio
 from dotenv import load_dotenv
+from contextlib import suppress
 from utils import search_book
 from summarize import get_summary
 from qa import prepare_qa
@@ -57,10 +59,11 @@ if st.session_state.book_name_search:
         # with col2:
         #     st.button("Start Chatting", key="message")
 
+
 if "summarize" not in st.session_state:
     st.session_state["summarize"] = False
 
-if "summerized" not in st.session_state:
+if "summarized" not in st.session_state:
     st.session_state["summarized"] = False
 
 
@@ -86,19 +89,34 @@ def render_chat():
             st.chat_message("assistant").write(output)
 
 
-if st.session_state.summarize:
-    book_id = st.session_state.book["id"]
-    prepare_qa(book_id)
-    summary = get_summary(book_id)
-    if "message" not in st.session_state:
-        st.session_state["message"] = [
-            {
-                "role": "assistant",
-                "content": summary,
-            },
-            {
-                "role": "assistant",
-                "content": f"Hello, I'm Babbler. I can talk about the book {st.session_state.book['title']}. Is there anything you want to know about?",
-            },
-        ]
+if st.session_state.summarized:
+    print("summarized")
+    print(st.session_state.message)
     render_chat()
+
+
+async def parallel():
+    if "book" not in st.session_state:
+        print("Select Book")
+        return
+    book_id = st.session_state.book["id"]
+    a = asyncio.gather(prepare_qa(book_id))
+    b = asyncio.gather(get_summary(book_id))
+    qa_ready, summary = await asyncio.gather(a, b)
+    st.session_state["message"] = [
+        {
+            "role": "assistant",
+            "content": summary[0],
+        },
+        {
+            "role": "assistant",
+            "content": f"Hello, I'm Babbler. I can talk about the book {st.session_state.book['title']}. Is there anything you want to know about?",
+        },
+    ]
+    st.session_state["summarized"] = True
+    print(st.session_state)
+    render_chat()
+
+
+if st.session_state.summarize:
+    asyncio.run(parallel())
