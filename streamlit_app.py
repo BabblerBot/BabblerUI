@@ -8,7 +8,6 @@ from summarize import get_summary
 
 # App title
 st.set_page_config(page_title="Babbler", page_icon="🤖")
-
 API_URL = "https://ishvalin-babbler.hf.space/generate"
 
 
@@ -34,6 +33,7 @@ div.stButton > button:first-child {
     unsafe_allow_html=True,
 )
 
+
 if st.session_state.book_name_search:
     book_name = st.session_state.book_name_search
     error, book = search_book(book_name)
@@ -53,27 +53,16 @@ if st.session_state.book_name_search:
         col1, col2 = st.columns(2)
         with col1:
             st.button("Summarize", key="summarize")
-        with col2:
-            st.button("Start Chatting", key="start_chatting")
+        # with col2:
+        #     st.button("Start Chatting", key="message")
 
-
-if "message" not in st.session_state:
-    st.session_state["message"] = [
-        {
-            "role": "assistant",
-            "content": "Hello, I'm Babbler. I can talk about books. What book do you want to talk about?",
-        }
-    ]
+if "summarize" not in st.session_state:
+    st.session_state["summarize"] = False
 
 
 def render_chat():
-    # Create a layout with columns
-    col1, col2 = st.columns([1, 8])
-
-    # Display chat history in the main column
-    with col2:
-        for msg in st.session_state.message:
-            st.chat_message(msg["role"]).write(msg["content"])
+    for msg in st.session_state.message:
+        st.chat_message(msg["role"]).write(msg["content"])
 
     prompt = st.chat_input()
     if prompt:
@@ -91,10 +80,27 @@ def render_chat():
             st.chat_message("assistant").write(output)
 
 
+
 if st.session_state.summarize:
     summary = get_summary(st.session_state.book["id"])
-    st.write(summary)
-    render_chat()
+    if "message" not in st.session_state:
+        st.session_state["message"] = [
+            {
+                "role": "assistant",
+                "content": summary,
+            },
+            {
+                "role": "assistant",
+                "content": "Hello, I'm Babbler. I can talk about books. What book do you want to talk about?",
+            }
+        ]
 
-if st.session_state.start_chatting:
-    render_chat()
+try:        
+    if st.session_state.message:
+        render_chat()
+except:
+    pass
+
+
+
+
