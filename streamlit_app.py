@@ -9,6 +9,8 @@ from summarize import get_summary
 # App title
 st.set_page_config(page_title="Babbler", page_icon="🤖")
 API_URL = "https://ishvalin-babbler.hf.space/generate"
+SUM_URL = ""
+QA_URL = "http://localhost:8001/answer"
 
 
 # App title
@@ -37,7 +39,7 @@ div.stButton > button:first-child {
 if st.session_state.book_name_search:
     book_name = st.session_state.book_name_search
     error, book = search_book(book_name)
-    print(book)
+    # print(book)
     if error:
         st.sidebar.error(error)
     else:
@@ -68,10 +70,12 @@ def render_chat():
     if prompt:
         st.session_state.message.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
-        response = requests.get(API_URL, params={"query": prompt})
+        response = requests.get(QA_URL, params={"query": prompt})
+        print(QA_URL)
+        print(response.json())
+        print(response.status_code)
         if response.status_code == 200:
-            data = response.json()
-            output = data["output"]
+            output = response.json()
             st.session_state.message.append({"role": "assistant", "content": output})
             st.chat_message("assistant").write(output)
         else:
