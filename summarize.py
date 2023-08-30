@@ -1,8 +1,16 @@
 import requests
 import difflib
+import os
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # code to get summary from summarize model
 def get_summary(book_id):
-    return f"{book_id} lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum"
+    response = requests.get(os.getenv("SUMMARY_BACKEND") + f"get_summary/{book_id}")
+    if response.status_code == 200:
+        data = response.json()
+        return data["summary"]
+    return f"Error {response.status_code}"

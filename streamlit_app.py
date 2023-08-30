@@ -2,15 +2,14 @@ import streamlit as st
 import replicate
 import os
 import requests
+from dotenv import load_dotenv
 from utils import search_book
 from summarize import get_summary
-
+from qa import prepare_qa
 
 # App title
 st.set_page_config(page_title="Babbler", page_icon="🤖")
-API_URL = "https://ishvalin-babbler.hf.space/generate"
-SUM_URL = ""
-QA_URL = "http://localhost:8001/answer"
+QA_URL = os.getenv("QA_BACKEND") + "answer"
 
 
 # App title
@@ -61,6 +60,9 @@ if st.session_state.book_name_search:
 if "summarize" not in st.session_state:
     st.session_state["summarize"] = False
 
+if "summerized" not in st.session_state:
+    st.session_state["summarized"] = False
+
 
 def render_chat():
     for msg in st.session_state.message:
@@ -84,9 +86,10 @@ def render_chat():
             st.chat_message("assistant").write(output)
 
 
-
 if st.session_state.summarize:
-    summary = get_summary(st.session_state.book["id"])
+    book_id = st.session_state.book["id"]
+    prepare_qa(book_id)
+    summary = get_summary(book_id)
     if "message" not in st.session_state:
         st.session_state["message"] = [
             {
@@ -95,16 +98,7 @@ if st.session_state.summarize:
             },
             {
                 "role": "assistant",
-                "content":f"Hello, I'm Babbler. I can talk about the book {st.session_state.book['title']}. Is there anything you want to know about?",
-            }
+                "content": f"Hello, I'm Babbler. I can talk about the book {st.session_state.book['title']}. Is there anything you want to know about?",
+            },
         ]
-
-try:        
-    if st.session_state.message:
-        render_chat()
-except:
-    pass
-
-
-
-
+    render_chat()
