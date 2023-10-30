@@ -17,6 +17,7 @@ QA_URL = os.getenv("QA_BACKEND") + "answer"
 # App title
 # App title
 st.columns([1])
+prompt = st.empty()
 
 
 # Sidebar for title
@@ -36,11 +37,24 @@ div.stButton > button:first-child {
     unsafe_allow_html=True,
 )
 
+if "prevbook_name" not in st.session_state:
+    st.session_state["prevbook_name"] = None
+
+
+def clear_chat():
+    prompt.empty()
+    st.session_state["message"] = []
+    st.session_state["summarized"] = False
+
 
 if st.session_state.book_name_search:
+    if st.session_state["prevbook_name"] != st.session_state.book_name_search:
+        print("New book selected... clearning chat")
+        clear_chat()
     book_name = st.session_state.book_name_search
+    st.session_state["prevbook_name"] = book_name
     error, book = search_book(book_name)
-    # print(book)
+    # print(st.session_state)
     if error:
         st.sidebar.error(error)
     else:
@@ -55,7 +69,7 @@ if st.session_state.book_name_search:
         st.write(f"Subjects: {', '.join(book['subjects'])}")
         col1, col2 = st.columns(2)
         with col1:
-            st.button("Summarize", key="summarize")
+            st.button("Summarize", key="summarize", on_click=clear_chat)
         # with col2:
         #     st.button("Start Chatting", key="message")
 
@@ -75,10 +89,12 @@ def render_chat():
     if prompt:
         st.session_state.message.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
-        response = requests.get(QA_URL, params={"query": prompt})
-        print(QA_URL)
-        print(response.json())
-        print(response.status_code)
+        response = requests.get(
+            QA_URL, params={"query": prompt, "book_id": st.session_state.book["id"]}
+        )
+        # print(QA_URL)
+        # print(response.json())
+        # print(response.status_code)
         if response.status_code == 200:
             output = response.json()
             st.session_state.message.append({"role": "assistant", "content": output})
@@ -91,11 +107,11 @@ def render_chat():
 
 if st.session_state.summarized:
     print("summarized")
-    print(st.session_state.message)
     render_chat()
 
 
 async def parallel():
+    clear_chat()
     if "book" not in st.session_state:
         print("Select Book")
         return
@@ -114,7 +130,7 @@ async def parallel():
         },
     ]
     st.session_state["summarized"] = True
-    print(st.session_state)
+    # print(st.session_state)
     render_chat()
 
 
