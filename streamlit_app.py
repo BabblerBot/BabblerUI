@@ -100,7 +100,7 @@ async def parallel():
         print("Select Book")
         return
     book_id = st.session_state.book["id"]
-    a = asyncio.gather(prepare_qa(book_id))
+    a = asyncio.gather(prepare_qa(book_id, book_name))
     b = asyncio.gather(get_summary(book_id))
     qa_ready, summary = await asyncio.gather(a, b)
     st.session_state["message"] = [
